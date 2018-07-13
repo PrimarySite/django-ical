@@ -62,7 +62,7 @@ ITEM_EVENT_FIELD_MAP = (
     ('geolocation',         'geo'),
     ('link',                'url'),
     ('organizer',           'organizer'),
-    # ('categories',          'categories'),  # disabling categories because of https://github.com/collective/icalendar/issues/263
+    ('categories',          'categories'),  # see https://github.com/collective/icalendar/issues/263
     ('rrule',               'rrule'),
     ('exrule',              'exrule'),
     ('rdate',               'rdate'),

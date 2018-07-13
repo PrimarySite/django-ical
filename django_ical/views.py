@@ -49,10 +49,6 @@ ICAL_EXTRA_FIELDS = [
     'status',           # CONFIRMED|TENTATIVE|CANCELLED
 ]
 
-# For Django <1.7
-if django.VERSION < (1, 7):
-    ICAL_EXTRA_FIELDS.append('updateddate')
-
 
 class ICalFeed(Feed):
     """

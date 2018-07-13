@@ -46,6 +46,7 @@ class TestItemsFeed(ICalFeed):
                 'rdates': [date(1999, 9, 2), date(1998, 1, 1)],
                 'xdates': [date(1999, 8, 1), date(1998, 2, 1)],
             },
+            'categories': ['cat', 'dog'],
             'geolocation': (37.386013, -122.082932),
             'organizer': 'john.doe@example.com',
             'modified': datetime(2012, 5, 2, 10, 0),
@@ -81,6 +82,9 @@ class TestItemsFeed(ICalFeed):
 
     def item_end_datetime(self, obj):
         return obj['end']
+
+    def item_categories(self, obj):
+        return obj.get('categories', None)
 
     def item_rrule(self, obj):
         return obj['recurrences']['rrules']
@@ -157,7 +161,6 @@ class ICal20FeedTest(TestCase):
 
         calendar = icalendar.Calendar.from_ical(response.content)
         self.assertEquals(len(calendar.subcomponents), 2)
-
         self.assertEquals(calendar.subcomponents[0]['SUMMARY'], 'Title1')
         self.assertEquals(calendar.subcomponents[0]['DESCRIPTION'], 'Description1')
         self.assertTrue(calendar.subcomponents[0]['URL'].endswith('/event/1'))
@@ -165,6 +168,7 @@ class ICal20FeedTest(TestCase):
         self.assertEquals(calendar.subcomponents[0]['DTEND'].to_ical(), b('20120501T200000'))
         self.assertEquals(calendar.subcomponents[0]['GEO'].to_ical(), "37.386013;-122.082932")
         self.assertEquals(calendar.subcomponents[0]['LAST-MODIFIED'].to_ical(), b('20120502T100000Z'))
+        self.assertEquals(calendar.subcomponents[0]['CATEGORIES'].to_ical(), b('cat,dog'))
         self.assertEquals(calendar.subcomponents[0]['ORGANIZER'].to_ical(),
                           b("MAILTO:john.doe@example.com"))
         self.assertEquals(calendar.subcomponents[0]['RRULE'][0].to_ical(), b('FREQ=DAILY;BYHOUR=10'))
@@ -174,6 +178,7 @@ class ICal20FeedTest(TestCase):
         self.assertEquals(calendar.subcomponents[0]['RDATE'].to_ical(), b('19990902,19980101'))
         self.assertEquals(calendar.subcomponents[0]['EXDATE'].to_ical(), b('19990801,19980201'))
         self.assertEquals(calendar.subcomponents[1]['SUMMARY'], 'Title2')
+        self.assertFalse(calendar.subcomponents[1]['CATEGORIES'].to_ical())
         self.assertEquals(calendar.subcomponents[1]['DESCRIPTION'], 'Description2')
         self.assertTrue(calendar.subcomponents[1]['URL'].endswith('/event/2'))
         self.assertEquals(calendar.subcomponents[1]['DTSTART'].to_ical(), b('20120506T180000'))
